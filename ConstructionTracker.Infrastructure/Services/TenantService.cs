@@ -12,21 +12,11 @@ public class TenantService : ITenantService
     
     public Guid GetCurrentTenantId()
     {
-        if (_currentTenantId == Guid.Empty)
-        {
-            throw new InvalidOperationException("Tenant ID has not been set. Ensure the user is authenticated.");
-        }
-        
         return _currentTenantId;
     }
     
     public Guid GetCurrentUserId()
     {
-        if (_currentUserId == Guid.Empty)
-        {
-            throw new InvalidOperationException("User ID has not been set. Ensure the user is authenticated.");
-        }
-        
         return _currentUserId;
     }
     

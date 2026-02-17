@@ -1,0 +1,138 @@
+### Construction Tracker API - Authentication Tests
+### Base URL
+@baseUrl = https://localhost:5001
+@contentType = application/json
+
+### Variables (will be set after registration/login)
+@authToken = YOUR_TOKEN_HERE
+
+###############################################
+### 1. Health Check (No Auth Required)
+###############################################
+GET {{baseUrl}}/api/health
+Accept: {{contentType}}
+
+###############################################
+### 2. Register New Company
+###############################################
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "companyName": "Acme Construction",
+  "subdomain": "acme",
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@acme.com",
+  "password": "SecurePass123!@#$",
+  "contactPhone": "+1234567890"
+}
+
+###############################################
+### 3. Register Another Company
+###############################################
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "companyName": "Builder Pro Inc",
+  "subdomain": "builderpro",
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@builderpro.com",
+  "password": "BuilderPass123!",
+  "contactPhone": "+1987654321"
+}
+
+###############################################
+### 4. Login (Existing User)
+###############################################
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@acme.com",
+  "password": "SecurePass123!@#$"
+}
+
+###############################################
+### 5. Login (Invalid Credentials - Should Fail)
+###############################################
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@acme.com",
+  "password": "WrongPassword123!"
+}
+
+###############################################
+### 6. Get Current User Info (Protected)
+### 🔒 Requires Authentication
+### Copy token from register/login response and paste above
+###############################################
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{authToken}}
+Accept: {{contentType}}
+
+###############################################
+### 7. Get Projects (Protected)
+### 🔒 Requires Authentication
+###############################################
+GET {{baseUrl}}/api/projects
+Authorization: Bearer {{authToken}}
+Accept: {{contentType}}
+
+###############################################
+### 8. Admin Endpoint (Protected - Admin Only)
+### 🔒 Requires Authentication + Admin Role
+###############################################
+GET {{baseUrl}}/api/projects/admin
+Authorization: Bearer {{authToken}}
+Accept: {{contentType}}
+
+###############################################
+### 9. Unauthorized Access Test (No Token)
+### Should return 401 Unauthorized
+###############################################
+GET {{baseUrl}}/api/projects
+Accept: {{contentType}}
+
+###############################################
+### 10. Invalid Token Test
+### Should return 401 Unauthorized
+###############################################
+GET {{baseUrl}}/api/projects
+Authorization: Bearer invalid.token.here
+Accept: {{contentType}}
+
+###############################################
+### TESTING NOTES:
+###############################################
+# 
+# 1. After successful registration or login, copy the "token" value
+# 2. Replace the @authToken variable at the top with your actual token
+# 3. The token format should be: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# 4. Tokens expire after 7 days
+# 5. Each company (tenant) is isolated - users can only see their own data
+# 
+###############################################
+
+###############################################
+### Password Requirements:
+###############################################
+# - Minimum 8 characters
+# - At least 1 uppercase letter
+# - At least 1 lowercase letter  
+# - At least 1 number
+# - At least 1 special character (@$!%*?&#)
+###############################################
+
+###############################################
+### Example Valid Passwords:
+###############################################
+# - SecurePass123!
+# - MyPassword1@
+# - Test1234!@#$
+# - Builder2024#
+###############################################

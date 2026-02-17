@@ -61,7 +61,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             {
                 case EntityState.Added:
                     entry.Entity.Id = entry.Entity.Id == Guid.Empty ? Guid.NewGuid() : entry.Entity.Id;
-                    entry.Entity.TenantId = tenantId;
+                    // Only set TenantId from context if not already explicitly set
+                    if (entry.Entity.TenantId == Guid.Empty && tenantId != Guid.Empty)
+                    {
+                        entry.Entity.TenantId = tenantId;
+                    }
                     entry.Entity.CreatedAt = now;
                     break;
                     
