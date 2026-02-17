@@ -1,258 +1,62 @@
-# 🏗️ Construction Project Tracker - Multi-Tenant SaaS Backend
+# 🏗️ Construction Project Tracker
 
-A professional multi-tenant SaaS backend for construction project management with JWT authentication, built using **.NET 9** and **PostgreSQL**.
+A multi-tenant SaaS backend for construction project management built with **.NET 9** and **Clean Architecture**.
 
----
+## 📋 Project Concept
 
-## 🎉 Day 2 Complete: JWT Authentication ✅
+A comprehensive construction project management system designed to help construction companies manage their projects, teams, tasks, and resources efficiently. The platform provides multi-tenant architecture allowing multiple companies to use the system while keeping their data completely isolated.
 
-### Implemented Features
-- ✅ Company registration with admin user creation
-- ✅ User login with JWT token generation (7-day expiration)
-- ✅ Secure password hashing (ASP.NET Identity PBKDF2)
-- ✅ Multi-tenant isolation via TenantId in JWT claims
-- ✅ Role-based authorization (Admin, Manager, Worker, Viewer)
-- ✅ Protected API endpoints with [Authorize] attribute
-- ✅ Swagger UI with Bearer token authentication
+### Key Features
 
----
+- **Multi-Tenant Architecture** - Each company operates in an isolated environment with their own data
+- **JWT Authentication** - Secure token-based authentication with role-based access control
+- **Project Management** - Create, track, and manage construction projects
+- **Team Management** - Assign team members with different roles (Admin, Manager, Worker, Viewer)
+- **Task Tracking** - Break down projects into manageable tasks with status tracking
+- **Secure & Scalable** - Built with security best practices and designed to scale
 
-## 🚀 Quick Start
+### Technology Stack
 
-### API is Running
-**Base URL:** http://localhost:5103  
-**Swagger:** http://localhost:5103/swagger
+- **.NET 9** - Modern web API framework
+- **Entity Framework Core 9** - Object-relational mapping
+- **SQLite/PostgreSQL** - Flexible database options
+- **JWT Bearer Authentication** - Industry-standard token authentication
+- **Swagger/OpenAPI** - Interactive API documentation
+- **Clean Architecture** - Maintainable and testable code structure
 
-### Test in 30 Seconds
-
-1. **Open Swagger:** http://localhost:5103/swagger
-2. **Register:** POST /api/auth/register
-   ```json
-   {
-     "companyName": "Test Co",
-     "subdomain": "testco",
-     "firstName": "John",
-     "lastName": "Doe",
-     "email": "john@testco.com",
-     "password": "Test1234!@#$"
-   }
-   ```
-3. **Copy the token** from response
-4. **Click "Authorize"** button (🔓)
-5. **Enter:** `Bearer YOUR_TOKEN`
-6. **Test protected endpoints!** ✅
-
----
-
-## 📡 API Endpoints
-
-| Endpoint | Method | Auth | Description |
-|----------|--------|------|-------------|
-| `/api/auth/register` | POST | ❌ | Register company + admin |
-| `/api/auth/login` | POST | ❌ | Login and get JWT |
-| `/api/auth/me` | GET | ✅ | Get current user |
-| `/api/projects` | GET | ✅ | Get projects (test) |
-| `/api/projects/admin` | GET | ✅ Admin | Admin only |
-| `/api/health` | GET | ❌ | Health check |
-
----
-
-## 🏗️ Architecture
+### Architecture Layers
 
 ```
-API Layer (Controllers)
-    ↓
-Application Layer (DTOs, Interfaces, Validation)
-    ↓
-Infrastructure Layer (Services, Repositories, EF Core)
-    ↓
-Domain Layer (Entities, Enums)
-    ↓
-PostgreSQL Database
+┌─────────────────────────────────────┐
+│     API Layer (Controllers)         │  ← HTTP Endpoints
+├─────────────────────────────────────┤
+│  Application Layer (Business Logic) │  ← Use Cases, DTOs, Interfaces
+├─────────────────────────────────────┤
+│ Infrastructure Layer (Data Access)  │  ← Repositories, Services, EF Core
+├─────────────────────────────────────┤
+│    Domain Layer (Core Entities)     │  ← Business Entities, Rules
+└─────────────────────────────────────┘
 ```
 
----
-
-## 🔐 Security
-
-- **Password Hashing:** ASP.NET Identity PasswordHasher (PBKDF2)
-- **JWT Signing:** HMAC-SHA256
-- **Token Expiration:** 7 days
-- **Password Policy:** 8+ chars, uppercase, lowercase, digit, special char
-- **Multi-Tenancy:** TenantId claim enforces data isolation
-
----
-
-## 📂 Project Structure
-
-```
-├── ConstructionTracker.API/          # Web API
-│   ├── Controllers/
-│   │   ├── AuthController.cs         # Auth endpoints
-│   │   └── ProjectsController.cs     # Protected test
-│   └── Program.cs
-├── ConstructionTracker.Application/  # Business logic
-│   └── Common/Models/Auth/           # DTOs
-├── ConstructionTracker.Infrastructure/ # Data access
-│   └── Services/
-│       ├── AuthService.cs            # Registration/login
-│       └── JwtService.cs             # Token generation
-└── ConstructionTracker.Domain/       # Entities
-    └── Entities/
-        ├── Tenant.cs
-        └── User.cs
-```
-
----
-
-## 📚 Documentation
-
-- **QUICK_START.md** - Quick reference guide
-- **DAY2_IMPLEMENTATION_SUMMARY.md** - Complete overview
-- **DAY2_JWT_AUTHENTICATION_COMPLETE.md** - Detailed technical guide
-- **Auth.http** - HTTP test requests
-
----
-
-## 🧪 Testing Examples
-
-### curl
-```bash
-# Register
-curl -X POST http://localhost:5103/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"companyName":"Test Co","subdomain":"testco","firstName":"John","lastName":"Doe","email":"john@testco.com","password":"Test1234!@#$"}'
-
-# Login
-curl -X POST http://localhost:5103/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"john@testco.com","password":"Test1234!@#$"}'
-
-# Protected endpoint
-curl http://localhost:5103/api/projects \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
-
----
-
-## 🗄️ Database
-
-**PostgreSQL** with Entity Framework Core
-
-### Tables
-- **Tenants** - Companies (multi-tenancy)
-- **Users** - User accounts with roles
-
-### Migrations
-```bash
-# Create migration
-dotnet ef migrations add MigrationName --project ConstructionTracker.Infrastructure --startup-project ConstructionTracker.API
-
-# Update database
-dotnet ef database update --project ConstructionTracker.Infrastructure --startup-project ConstructionTracker.API
-```
-
----
-
-## ⚙️ Configuration
-
-Update `appsettings.Development.json`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=construction_tracker_dev;Username=postgres;Password=YOUR_PASSWORD"
-  },
-  "JwtSettings": {
-    "SecretKey": "your-secret-key-min-32-characters",
-    "Issuer": "ConstructionTracker.API",
-    "Audience": "ConstructionTracker.Client",
-    "ExpirationInDays": 7
-  }
-}
-```
-
-⚠️ **Change SecretKey in production!**
-
----
-
-## 🎯 Next Steps (Day 3+)
-
-### Coming Soon
-- [ ] Project CRUD operations
-- [ ] Task management
-- [ ] Team assignments
-- [ ] File uploads
-- [ ] Real-time notifications (SignalR)
-- [ ] Reporting and analytics
-
----
-
-## 🐛 Common Issues
-
-**401 Unauthorized**
-→ Check `Authorization: Bearer {token}` header format
-
-**Email/subdomain exists**
-→ Each must be unique, choose a different value
-
-**Password validation fails**
-→ Must have 8+ chars, uppercase, lowercase, digit, special char
-
----
-
-## 🛠️ Development
+### Getting Started
 
 ```bash
-# Build
+# Clone the repository
+git clone https://github.com/Chalana-98/Construction.WebAPI.git
+
+# Navigate to project
+cd Construction.WebAPI
+
+# Build the solution
 dotnet build
 
-# Run
+# Run the API
 dotnet run --project ConstructionTracker.API
 
-# Watch mode (auto-restart)
-dotnet watch --project ConstructionTracker.API
+# Access Swagger UI
+http://localhost:5103/swagger
 ```
 
 ---
 
-## 📦 Tech Stack
-
-- **.NET 9** - Web API framework
-- **PostgreSQL** - Database
-- **Entity Framework Core 9** - ORM
-- **JWT Bearer** - Authentication
-- **ASP.NET Identity** - Password hashing
-- **Swagger/OpenAPI** - API documentation
-- **FluentValidation** - Input validation
-- **MediatR** - CQRS pattern
-- **Dapper** - Raw SQL queries
-
----
-
-## ✅ Implementation Checklist
-
-- [x] Multi-tenant architecture
-- [x] JWT authentication
-- [x] Company registration
-- [x] User login
-- [x] Protected endpoints
-- [x] Role-based authorization
-- [x] Password security
-- [x] Swagger documentation
-- [x] Clean architecture
-- [x] Async operations
-
----
-
-## 🎉 Status
-
-**Day 2: JWT Authentication - COMPLETE!** ✅
-
-The authentication system is production-ready with secure password hashing, JWT tokens, multi-tenant support, and comprehensive documentation.
-
-**Ready for Day 3!** 🚀
-
----
-
-**Built with ❤️ using .NET 9, PostgreSQL, and Entity Framework Core**
+**Built with ❤️ using .NET 9 and Clean Architecture principles**
